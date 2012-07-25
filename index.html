@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="GitHubHook : GitHub Post-Receive Deployment Hook" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>GitHubHook</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/kwangchin/GitHubHook">View on GitHub</a>
+
+          <h1 id="project_title">GitHubHook</h1>
+          <h2 id="project_tagline">GitHub Post-Receive Deployment Hook</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/kwangchin/GitHubHook/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/kwangchin/GitHubHook/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>GitHub Post-Receive Deployment Hook</h2>
+
+<p>Deploying applications to development, staging and production never been so easy with GitHub Post-Receive Deployment Hook script!</p>
+
+<h3>Installation</h3>
+
+<p>Clone the script:</p>
+
+<pre><code>$ <strong>git clone https://github.com/kwangchin/GitHubHook.git</strong>
+</code></pre>
+
+<p>Go to your <code>GitHub repo</code> &gt; <code>Admin</code> &gt; <code>Service Hooks</code>, select <code>Post-Receive URLS</code> and enter your hook URL like this:</p>
+
+<p><img src="http://s3.kcblog.net/images/GitHubHook-01.png" alt="GitHub Post-Receive URLs"></p>
+
+<h3>How It Works</h3>
+
+<p>GitHub provides <a href="http://help.github.com/post-receive-hooks/">Post-Receive Hooks</a> to allow HTTP callback with a HTTP Post. We then create a script for the callback to deploy the systems automatically.</p>
+
+<p>You will need to create branches like <code>stage</code> and <code>prod</code> in Git before proceeding into the configurations.</p>
+
+<p>You then can have a brief look into <code>hook.php</code>, a WebHook example provided for you to experience how simple the configurations are.</p>
+
+<pre><code>&lt;?php
+require_once('class.GitHubHook.php');
+
+// Initiate the GitHub Deployment Hook
+$hook = new GitHubHook;
+
+// Enable the debug log, kindly make `log/hook.log` writable
+$hook-&gt;enableDebug();
+
+// Adding `stage` branch to deploy for `staging` to path `/var/www/testhook/stage`
+$hook-&gt;addBranch('stage', 'staging', '/var/www/stage');
+
+// Adding `prod` branch to deploy for `production` to path `/var/www/testhook/prod`
+$hook-&gt;addBranch('prod', 'production', '/var/www/prod', array('user@gmail.com'));
+
+// Deploy the commits
+$hook-&gt;deploy();
+</code></pre>
+
+<p>In this example, we enabled the debug log for messages with timestamp. You can disable this by commenting or removing the line <code>$hook-&gt;enableDebug()</code></p>
+
+<p>We have a staging site and a production site in this example. You can add more branches easily with <code>$hook-&gt;addBranch()</code> method if you have more systems to deploy.</p>
+
+<p>We then use <code>$hook-&gt;deploy()</code> to deploy the systems.</p>
+
+<h3>Security</h3>
+
+<p>Worry about securities? We have enabled IP check to allow only GitHub hook addresses: <code>207.97.227.253</code>, <code>50.57.128.197</code> to deploy the systems. We also return a <code>404 Not Found</code> page when there is illegal access to the hook script.</p>
+
+<p>For better security, try hiding this hook script in deep directories like <code>http://www.example.com/let/us/play/hide/and/seek/</code> and/or renaming the <code>hook.php</code> file into <code>a40b6cf7a5.php</code>.</p>
+
+<h3>For Developers</h3>
+
+<p>We are trying to make developers life easier. Kindly fork this on GitHub and submit your pull requests to help us.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">GitHubHook maintained by <a href="https://github.com/kwangchin">kwangchin</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-33642901-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
