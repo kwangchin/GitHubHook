@@ -47,21 +47,15 @@ class GitHubHook
    * @since 1.0
    */
   function __construct() {
-
     /* support for ec2 load balancers */
     if (
         isset($_SERVER['HTTP_X_FORWARDED_FOR']) && 
         filter_var($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)
       ) {
-
       $this->_remoteIp = $_SERVER['HTTP_X_FORWARDED_FOR'];
-
     } else {
-
       $this->_remoteIp = $_SERVER['REMOTE_ADDR'];
-
     }
-    
     if (isset($_POST['payload'])) {
       $this->_payload  = json_decode($_POST['payload']);
     } else {
@@ -75,11 +69,9 @@ class GitHubHook
    */
 
   private function _notFound($reason=false) {
-
     if ($reason !== false) {
       $this->log($reason);
     }
-
     header('HTTP/1.1 404 Not Found');
     echo '404 Not Found.';
     return false;
