@@ -50,7 +50,7 @@ We then use `$hook->deploy()` to deploy the systems.
 
 ### Security
 
-Worry about securities? We have enabled IP check to allow only GitHub hook addresses: `207.97.227.253`, `50.57.128.197` to deploy the systems. We also return a `404 Not Found` page when there is illegal access to the hook script.
+Worry about securities? We have enabled IP check to allow only GitHub hook addresses: `207.97.227.253`, `50.57.128.197`, `108.171.174.178` to deploy the systems. We also return a `404 Not Found` page when there is illegal access to the hook script.
 
 For better security, try hiding this hook script in deep directories like `http://www.example.com/let/us/play/hide/and/seek/` and/or renaming the `hook.php` file into `a40b6cf7a5.php`.
 

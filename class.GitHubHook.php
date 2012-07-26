@@ -3,7 +3,7 @@ error_reporting(0);
 
 /**
  * GitHub Post-Receive Deployment Hook.
- * 
+ *
  * @author Chin Lee <kwangchin@gmail.com>
  * @copyright Copyright (C) 2012 Chin Lee
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
@@ -17,66 +17,68 @@ class GitHubHook
    * @since 1.0
    */
   private $_remoteIp = '';
-  
+
   /**
    * @var object Payload from GitHub.
    * @since 1.0
    */
   private $_payload = '';
-  
+
   /**
    * @var boolean Log debug messages.
    * @since 1.0
    */
   private $_debug = FALSE;
-  
+
   /**
    * @var array Branches.
    * @since 1.0
    */
   private $_branches = array();
-  
+
   /**
-   * @var array githubs updated ip's used.
-   * @since 1.0
+   * @var array GitHub's IP addresses for hooks.
+   * @since 1.1
    */
   private $_ips = array('207.97.227.253', '50.57.128.197', '108.171.174.178');
- 
+
   /**
    * Constructor.
    * @since 1.0
    */
   function __construct() {
-    /* support for ec2 load balancers */
+    /* Support for EC2 load balancers */
     if (
-        isset($_SERVER['HTTP_X_FORWARDED_FOR']) && 
+        isset($_SERVER['HTTP_X_FORWARDED_FOR']) &&
         filter_var($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)
       ) {
       $this->_remoteIp = $_SERVER['HTTP_X_FORWARDED_FOR'];
     } else {
       $this->_remoteIp = $_SERVER['REMOTE_ADDR'];
     }
+
     if (isset($_POST['payload'])) {
       $this->_payload  = json_decode($_POST['payload']);
     } else {
-      $this->_notFound('payload not available');
+      $this->_notFound('Payload not available from: ' . $this->_remoteIp);
     }
   }
 
   /**
-   * centralize our 404
-   * @since 1.0
+   * Centralize our 404.
+   * @param string $reason Reason of 404 Not Found.
+   * @since 1.1
    */
-
-  private function _notFound($reason=false) {
-    if ($reason !== false) {
+  private function _notFound($reason = NULL) {
+    if ($reason !== NULL) {
       $this->log($reason);
     }
+
     header('HTTP/1.1 404 Not Found');
     echo '404 Not Found.';
-    return false;
+    exit;
   }
-  
+
   /**
    * Enable log of debug messages.
    * @since 1.0
@@ -84,7 +86,7 @@ class GitHubHook
   public function enableDebug() {
     $this->_debug = TRUE;
   }
-  
+
   /**
    * Add a branch.
    * @param string $name Branch name, defaults to 'master'.
@@ -101,7 +103,7 @@ class GitHubHook
       'author' => $author
     );
   }
-  
+
   /**
    * Log a message.
    * @param string $message Message to log.
@@ -112,7 +114,7 @@ class GitHubHook
       file_put_contents('log/hook.log', '[' . date('Y-m-d H:i:s') . '] - ' . $message . PHP_EOL, FILE_APPEND);
     }
   }
-  
+
   /**
    * Deploys.
    * @since 1.0
@@ -121,12 +123,13 @@ class GitHubHook
     if (in_array($this->_remoteIp, $this->_ips)) {
       foreach ($this->_branches as $branch) {
         if ($this->_payload->ref == 'refs/heads/' . $branch['name']) {
+
           $this->log('Deploying to ' . $branch['title'] . ' server');
           shell_exec('./deploy.sh ' . $branch['path'] . ' ' . $branch['name']);
         }
       }
     } else {
-      $this->_notFound('ip address not recognized : '.$this->_remoteIp);
+      $this->_notFound('IP address not recognized: ' . $this->_remoteIp);
     }
   }
 }
