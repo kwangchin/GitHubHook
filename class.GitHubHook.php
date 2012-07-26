@@ -36,22 +36,45 @@ class GitHubHook
    */
   private $_branches = array();
   
-  
-  
+  /**
+   * @var array githubs updated ip's used.
+   * @since 1.0
+   */
+  private $_ips = array('207.97.227.253', '50.57.128.197', '108.171.174.178');
+ 
   /**
    * Constructor.
    * @since 1.0
    */
   function __construct() {
-    $this->_remoteIp = $_SERVER['REMOTE_ADDR'];
-    
+    /* support for ec2 load balancers */
+    if (
+        isset($_SERVER['HTTP_X_FORWARDED_FOR']) && 
+        filter_var($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)
+      ) {
+      $this->_remoteIp = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+      $this->_remoteIp = $_SERVER['REMOTE_ADDR'];
+    }
     if (isset($_POST['payload'])) {
       $this->_payload  = json_decode($_POST['payload']);
     } else {
-      header('HTTP/1.1 404 Not Found');
-      echo '404 Not Found.';
-      exit;
+      $this->_notFound('payload not available');
     }
+  }
+
+  /**
+   * centralize our 404
+   * @since 1.0
+   */
+
+  private function _notFound($reason=false) {
+    if ($reason !== false) {
+      $this->log($reason);
+    }
+    header('HTTP/1.1 404 Not Found');
+    echo '404 Not Found.';
+    return false;
   }
   
   /**
@@ -95,13 +118,15 @@ class GitHubHook
    * @since 1.0
    */
   public function deploy() {
-    if ($this->_remoteIp == '207.97.227.253' || $this->_remoteIp == '50.57.128.197') {
+    if (in_array($this->_remoteIp, $this->_ips)) {
       foreach ($this->_branches as $branch) {
         if ($this->_payload->ref == 'refs/heads/' . $branch['name']) {
           $this->log('Deploying to ' . $branch['title'] . ' server');
           shell_exec('./deploy.sh ' . $branch['path'] . ' ' . $branch['name']);
         }
       }
+    } else {
+      $this->_notFound('ip address not recognized : '.$this->_remoteIp);
     }
   }
 }
