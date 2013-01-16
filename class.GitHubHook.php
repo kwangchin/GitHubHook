@@ -40,7 +40,7 @@ class GitHubHook
    * @var array GitHub's IP addresses for hooks.
    * @since 1.1
    */
-  private $_ips = array('207.97.227.253', '50.57.128.197', '108.171.174.178');
+  private $_ips = array('207.97.227.253', '50.57.128.197', '108.171.174.178', '50.57.231.61');
 
   /**
    * Constructor.
