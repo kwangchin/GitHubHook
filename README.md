@@ -11,7 +11,7 @@ Clone the script:
 
 Go to your `GitHub repo` &gt; `Admin` &gt; `Service Hooks`, select `Post-Receive URLS` and enter your hook URL like this:
 
-![GitHub Post-Receive URLs](http://s3.kcblog.net/images/GitHubHook-01.png)
+![GitHub Post-Receive URLs](http://s23.postimage.org/r8eui3jdn/Git_Hub_Hook_01.png)
 
 ### How It Works
 
@@ -50,7 +50,7 @@ We then use `$hook->deploy()` to deploy the systems.
 
 ### Security
 
-Worry about securities? We have enabled IP check to allow only GitHub hook addresses: `54.235.183.49`, `54.235.183.23`, `54.235.118.251`, `54.235.120.57`, `54.235.120.61`, `54.235.120.62` to deploy the systems. We also return a `404 Not Found` page when there is illegal access to the hook script.
+Worry about securities? We have enabled IP check (CIDR notation) to allow only [GitHub hook addresses](https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-whitelist):  `207.97.227.253/32`, `50.57.128.197/32`, `108.171.174.178/32`, `50.57.231.61/32`, `204.232.175.64/27`, `192.30.252.0/22` to deploy the systems. We also return a `404 Not Found` page when there is illegal access to the hook script.
 
 For better security, try hiding this hook script in deep directories like `http://www.example.com/let/us/play/hide/and/seek/` and/or renaming the `hook.php` file into `a40b6cf7a5.php`.
 
