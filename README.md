@@ -50,7 +50,7 @@ We then use `$hook->deploy()` to deploy the systems.
 
 ### Security
 
-Worry about securities? We have enabled IP check (CIDR notation) to allow only [GitHub hook addresses](https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-whitelist):  `207.97.227.253/32`, `50.57.128.197/32`, `108.171.174.178/32`, `50.57.231.61/32`, `204.232.175.64/27`, `192.30.252.0/22` to deploy the systems. We also return a `404 Not Found` page when there is illegal access to the hook script.
+Worry about securities? We have enabled IP check to allow only [GitHub hook addresses](https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-whitelist) (CIDR notation):  `207.97.227.253/32`, `50.57.128.197/32`, `108.171.174.178/32`, `50.57.231.61/32`, `204.232.175.64/27`, `192.30.252.0/22` to deploy the systems. We also return a `404 Not Found` page when there is illegal access to the hook script.
 
 For better security, try hiding this hook script in deep directories like `http://www.example.com/let/us/play/hide/and/seek/` and/or renaming the `hook.php` file into `a40b6cf7a5.php`.
 
