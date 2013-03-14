@@ -37,10 +37,9 @@ class GitHubHook
   private $_branches = array();
 
   /**
-   * @var array GitHub's IP addresses for hooks.
-   * @since 1.1
+   * @var array GitHub's public IP addresses for hooks (CIDR notation).
    */
-  private $_ips = array('54.235.183.49', '54.235.183.23', '54.235.118.251', '54.235.120.57', '54.235.120.61', '54.235.120.62');
+  private $_github_public_cidrs = array('207.97.227.253/32', '50.57.128.197/32', '108.171.174.178/32', '50.57.231.61/32', '204.232.175.64/27', '192.30.252.0/22');
 
   /**
    * Constructor.
@@ -79,6 +78,39 @@ class GitHubHook
     exit;
   }
 
+  /**
+   * IP in CIDRs Match - checks whether an IP exists within an array of CIDR ranges.
+   * @link - http://stackoverflow.com/questions/10243594/find-whether-a-given-ip-exists-in-cidr-or-not?lq=1
+   * @param string $ip - IP address in '127.0.0.1' format
+   * @param array $cidrs - array storing CIDRS in 192.168.1.20/27 format.
+   * @return bool
+   */
+  private function ip_in_cidrs($ip, $cidrs) {
+	$ipu = explode('.', $ip);
+		
+	foreach ($ipu as &$v) {
+		$v = str_pad(decbin($v), 8, '0', STR_PAD_LEFT);
+	}
+		
+	$ipu = join('', $ipu);
+	$result = FALSE;
+		
+	foreach ($cidrs as $cidr) {
+		$parts = explode('/', $cidr);
+		$ipc = explode('.', $parts[0]);
+		
+		foreach ($ipc as &$v) $v = str_pad(decbin($v), 8, '0', STR_PAD_LEFT); {
+			$ipc = substr(join('', $ipc), 0, $parts[1]);
+			$ipux = substr($ipu, 0, $parts[1]);
+			$result = ($ipc === $ipux);				
+		}
+			
+		if ($result) break;
+	}
+		
+	return $result;
+  }
+	
   /**
    * Enable log of debug messages.
    * @since 1.0
@@ -120,7 +152,8 @@ class GitHubHook
    * @since 1.0
    */
   public function deploy() {
-    if (in_array($this->_remoteIp, $this->_ips)) {
+	// Check the remote is a whitelisted GitHub public ip.
+    if ($this->ip_in_cidrs($this->_remote_ip, $this->_github_public_cidrs)) {
       foreach ($this->_branches as $branch) {
         if ($this->_payload->ref == 'refs/heads/' . $branch['name']) {
 
@@ -129,6 +162,7 @@ class GitHubHook
         }
       }
     } else {
+	  // IP of remote is invalid.
       $this->_notFound('IP address not recognized: ' . $this->_remoteIp);
     }
   }
