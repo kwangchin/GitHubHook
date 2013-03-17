@@ -153,7 +153,7 @@ class GitHubHook
    */
   public function deploy() {
 	// Check the remote is a whitelisted GitHub public ip.
-    if ($this->ip_in_cidrs($this->_remote_ip, $this->_github_public_cidrs)) {
+    if ($this->ip_in_cidrs($this->_remoteIp, $this->_github_public_cidrs)) {
       foreach ($this->_branches as $branch) {
         if ($this->_payload->ref == 'refs/heads/' . $branch['name']) {
 
