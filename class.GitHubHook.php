@@ -39,7 +39,7 @@ class GitHubHook
   /**
    * @var array GitHub's public IP addresses for hooks (CIDR notation).
    */
-  private $_github_public_cidrs = array('207.97.227.253/32', '50.57.128.197/32', '108.171.174.178/32', '50.57.231.61/32', '204.232.175.64/27', '192.30.252.0/22');
+  private $_github_public_cidrs = array('204.232.175.64/27', '192.30.252.0/22');
 
   /**
    * Constructor.
@@ -87,30 +87,30 @@ class GitHubHook
    */
   private function ip_in_cidrs($ip, $cidrs) {
 	$ipu = explode('.', $ip);
-		
+
 	foreach ($ipu as &$v) {
 		$v = str_pad(decbin($v), 8, '0', STR_PAD_LEFT);
 	}
-		
+
 	$ipu = join('', $ipu);
 	$result = FALSE;
-		
+
 	foreach ($cidrs as $cidr) {
 		$parts = explode('/', $cidr);
 		$ipc = explode('.', $parts[0]);
-		
+
 		foreach ($ipc as &$v) $v = str_pad(decbin($v), 8, '0', STR_PAD_LEFT); {
 			$ipc = substr(join('', $ipc), 0, $parts[1]);
 			$ipux = substr($ipu, 0, $parts[1]);
-			$result = ($ipc === $ipux);				
+			$result = ($ipc === $ipux);
 		}
-			
+
 		if ($result) break;
 	}
-		
+
 	return $result;
   }
-	
+
   /**
    * Enable log of debug messages.
    * @since 1.0
