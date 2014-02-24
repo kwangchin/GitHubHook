@@ -39,7 +39,7 @@ class GitHubHook
   /**
    * @var array GitHub's public IP addresses for hooks (CIDR notation).
    */
-  private $_github_public_cidrs = array('204.232.175.64/27', '192.30.252.0/22');
+  private $_github_public_cidrs = array('192.30.252.0/22');
 
   /**
    * Constructor.
