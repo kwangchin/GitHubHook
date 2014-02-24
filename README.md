@@ -27,7 +27,7 @@ require_once('class.GitHubHook.php');
 // Initiate the GitHub Deployment Hook
 $hook = new GitHubHook;
 
-// Enable the debug log, kindly make `log/hook.log` writable
+// Enable the debug log (sent to error_log) 
 $hook-&gt;enableDebug();
 
 // Adding `stage` branch to deploy for `staging` to path `/var/www/testhook/stage`

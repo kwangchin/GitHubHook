@@ -143,8 +143,8 @@ class GitHubHook
    */
   public function log($message) {
     if ($this->_debug) {
-      file_put_contents('log/hook.log', '[' . date('Y-m-d H:i:s') . '] - ' . $message . PHP_EOL, FILE_APPEND);
-    }
+       error_log($message);
+     }
   }
 
   /**
