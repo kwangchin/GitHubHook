@@ -137,6 +137,17 @@ class GitHubHook
   }
 
   /**
+   * Handle error (defaults to trigger E_USER_ERROR);
+   * @param string $message Message to log.
+   * @since 1.0
+   */
+  public function error($code,$message) {
+    if ($this->_debug) {
+      trigger_error($message,E_USER_ERROR);
+     }
+  }
+
+  /**
    * Log a message.
    * @param string $message Message to log.
    * @since 1.0
@@ -156,9 +167,16 @@ class GitHubHook
     if ($this->ip_in_cidrs($this->_remoteIp, $this->_github_public_cidrs)) {
       foreach ($this->_branches as $branch) {
         if ($this->_payload->ref == 'refs/heads/' . $branch['name']) {
-
           $this->log('Deploying to ' . $branch['title'] . ' server');
-          shell_exec('./deploy.sh ' . $branch['path'] . ' ' . $branch['name']);
+	  $output=array(); 
+	  $exit=0;
+	  $cmd='git pull --git-dir='. escapeshellarg($branch['path']) .' options '. escapeshellarg($branch['name']); 
+          exec($cmd,$output,$exit);
+	  $msg="\t" . join(PHP_EOL . "\t", $output);
+	  if (0!=$exit)
+	    $this->error("error($exit): " . $branch['path'] . '$ ' . $cmd . PHP_EOL . $msg);
+	  else
+	    $this->log(msg); 
         }
       }
     } else {
