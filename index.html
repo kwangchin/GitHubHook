@@ -31,11 +31,13 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h2>GitHub Post-Receive Deployment Hook</h2>
+        <h2>
+<a name="github-post-receive-deployment-hook" class="anchor" href="#github-post-receive-deployment-hook"><span class="octicon octicon-link"></span></a>GitHub Post-Receive Deployment Hook</h2>
 
 <p>Deploying applications to development, staging and production never been so easy with GitHub Post-Receive Deployment Hook script!</p>
 
-<h3>Installation</h3>
+<h3>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>
 
 <p>Clone the script:</p>
 
@@ -44,9 +46,10 @@
 
 <p>Go to your <code>GitHub repo</code> &gt; <code>Admin</code> &gt; <code>Service Hooks</code>, select <code>Post-Receive URLS</code> and enter your hook URL like this:</p>
 
-<p><img src="http://s3.kcblog.net/images/GitHubHook-01.png" alt="GitHub Post-Receive URLs"></p>
+<p><img src="http://s23.postimage.org/r8eui3jdn/Git_Hub_Hook_01.png" alt="GitHub Post-Receive URLs"></p>
 
-<h3>How It Works</h3>
+<h3>
+<a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How It Works</h3>
 
 <p>GitHub provides <a href="http://help.github.com/post-receive-hooks/">Post-Receive Hooks</a> to allow HTTP callback with a HTTP Post. We then create a script for the callback to deploy the systems automatically.</p>
 
@@ -60,7 +63,7 @@ require_once('class.GitHubHook.php');
 // Initiate the GitHub Deployment Hook
 $hook = new GitHubHook;
 
-// Enable the debug log, kindly make `log/hook.log` writable
+// Enable the debug log (sent to error_log) 
 $hook-&gt;enableDebug();
 
 // Adding `stage` branch to deploy for `staging` to path `/var/www/testhook/stage`
@@ -79,13 +82,15 @@ $hook-&gt;deploy();
 
 <p>We then use <code>$hook-&gt;deploy()</code> to deploy the systems.</p>
 
-<h3>Security</h3>
+<h3>
+<a name="security" class="anchor" href="#security"><span class="octicon octicon-link"></span></a>Security</h3>
 
-<p>Worry about securities? We have enabled IP check to allow only GitHub hook addresses: <code>54.235.183.49</code>, <code>54.235.183.23</code>, <code>54.235.118.251</code>, <code>54.235.120.57</code>, <code>54.235.120.61</code>, <code>54.235.120.62</code> to deploy the systems. We also return a <code>404 Not Found</code> page when there is illegal access to the hook script.</p>
+<p>Worry about securities? We have enabled IP check to allow only <a href="https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-whitelist">GitHub hook addresses</a> (CIDR notation):  <code>192.30.252.0/22</code> to deploy the systems. We also return a <code>404 Not Found</code> page when there is illegal access to the hook script.</p>
 
 <p>For better security, try hiding this hook script in deep directories like <code>http://www.example.com/let/us/play/hide/and/seek/</code> and/or renaming the <code>hook.php</code> file into <code>a40b6cf7a5.php</code>.</p>
 
-<h3>For Developers</h3>
+<h3>
+<a name="for-developers" class="anchor" href="#for-developers"><span class="octicon octicon-link"></span></a>For Developers</h3>
 
 <p>We are trying to make developers life easier. Kindly fork this on GitHub and submit your pull requests to help us.</p>
       </section>
