@@ -39,7 +39,7 @@ class GitHubHook
   /**
    * @var array GitHub's public IP addresses for hooks (CIDR notation).
    */
-  private $_github_public_cidrs = array('204.232.175.64/27', '192.30.252.0/22');
+  private $_github_public_cidrs = array('192.30.252.0/22');
 
   /**
    * Constructor.
@@ -137,14 +137,25 @@ class GitHubHook
   }
 
   /**
+   * Handle error (defaults to trigger E_USER_ERROR);
+   * @param string $message Message to log.
+   * @since 1.0
+   */
+  public function error($code,$message) {
+    if ($this->_debug) {
+      trigger_error($message,E_USER_ERROR);
+     }
+  }
+
+  /**
    * Log a message.
    * @param string $message Message to log.
    * @since 1.0
    */
   public function log($message) {
     if ($this->_debug) {
-      file_put_contents('log/hook.log', '[' . date('Y-m-d H:i:s') . '] - ' . $message . PHP_EOL, FILE_APPEND);
-    }
+       error_log($message);
+     }
   }
 
   /**
@@ -156,9 +167,16 @@ class GitHubHook
     if ($this->ip_in_cidrs($this->_remoteIp, $this->_github_public_cidrs)) {
       foreach ($this->_branches as $branch) {
         if ($this->_payload->ref == 'refs/heads/' . $branch['name']) {
-
           $this->log('Deploying to ' . $branch['title'] . ' server');
-          shell_exec('./deploy.sh ' . $branch['path'] . ' ' . $branch['name']);
+	  $output=array(); 
+	  $exit=0;
+	  $cmd='git pull --git-dir='. escapeshellarg($branch['path']) .' options '. escapeshellarg($branch['name']); 
+          exec($cmd,$output,$exit);
+	  $msg="\t" . join(PHP_EOL . "\t", $output);
+	  if (0!=$exit)
+	    $this->error("error($exit): " . $branch['path'] . '$ ' . $cmd . PHP_EOL . $msg);
+	  else
+	    $this->log(msg); 
         }
       }
     } else {
