@@ -170,7 +170,7 @@ class GitHubHook
           $this->log('Deploying to ' . $branch['title'] . ' server');
 	  $output=array(); 
 	  $exit=0;
-	  $cmd='git pull --git-dir='. escapeshellarg($branch['path']) .' options '. escapeshellarg($branch['name']); 
+	  $cmd='git --git-dir='. escapeshellarg($branch['path'] . '/.git') .' --work-tree='. escapeshellarg($branch['path']) .' pull origin '. escapeshellarg($branch['name']);
           exec($cmd,$output,$exit);
 	  $msg="\t" . join(PHP_EOL . "\t", $output);
 	  if (0!=$exit)
