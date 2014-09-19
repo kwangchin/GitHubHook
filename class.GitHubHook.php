@@ -125,14 +125,16 @@ class GitHubHook
    * @param string $title Branch title, defaults to 'development'.
    * @param string $path Relative path to development directory, defaults to '/var/www/'.
    * @param array $author Contains authorized users' email addresses, defaults to everyone.
+   * @param string $custom_cmd Custom command to run
    * @since 1.0
    */
-  public function addBranch($name = 'master', $title = 'development', $path = '/var/www/', $author = array()) {
+  public function addBranch($name = 'master', $title = 'development', $path = '/var/www/', $author = array(), $custom_cmd = null) {
     $this->_branches[] = array(
       'name'   => $name,
       'title'  => $title,
       'path'   => $path,
-      'author' => $author
+      'author' => $author,
+      'cmd'    => $custom_cmd
     );
   }
 
@@ -163,25 +165,29 @@ class GitHubHook
    * @since 1.0
    */
   public function deploy() {
-	// Check the remote is a whitelisted GitHub public ip.
-    if ($this->ip_in_cidrs($this->_remoteIp, $this->_github_public_cidrs)) {
-      foreach ($this->_branches as $branch) {
-        if ($this->_payload->ref == 'refs/heads/' . $branch['name']) {
-          $this->log('Deploying to ' . $branch['title'] . ' server');
-	  $output=array(); 
-	  $exit=0;
-	  $cmd='git --git-dir='. escapeshellarg($branch['path'] . '/.git') .' --work-tree='. escapeshellarg($branch['path']) .' pull origin '. escapeshellarg($branch['name']);
-          exec($cmd,$output,$exit);
-	  $msg="\t" . join(PHP_EOL . "\t", $output);
-	  if (0!=$exit)
-	    $this->error("error($exit): " . $branch['path'] . '$ ' . $cmd . PHP_EOL . $msg);
-	  else
-	    $this->log(msg); 
-        }
+      // Check the remote is a whitelisted GitHub public ip.
+      if ($this->ip_in_cidrs($this->_remoteIp, $this->_github_public_cidrs)) {
+          foreach ($this->_branches as $branch) {
+              if ($this->_payload->ref == 'refs/heads/' . $branch['name']) {
+                  $this->log('Deploying to ' . $branch['title'] . ' server');
+                  $output=array(); 
+                  $exit=0;
+                  if (is_null($branch['cmd'])) {
+                      $cmd='git --git-dir='. escapeshellarg($branch['path'] . '/.git') .' --work-tree='. escapeshellarg($branch['path']) .' pull origin '. escapeshellarg($branch['name']);
+                  } else {
+                      $cmd=escapeshellcmd($branch['cmd']);
+                  }
+                  exec($cmd,$output,$exit);
+                  $msg="\t" . join(PHP_EOL . "\t", $output);
+                  if (0!=$exit)
+                      $this->error("error($exit): " . $branch['path'] . '$ ' . $cmd . PHP_EOL . $msg);
+                  else
+                      $this->log(msg); 
+              }
+          }
+      } else {
+          // IP of remote is invalid.
+          $this->_notFound('IP address not recognized: ' . $this->_remoteIp);
       }
-    } else {
-	  // IP of remote is invalid.
-      $this->_notFound('IP address not recognized: ' . $this->_remoteIp);
-    }
   }
 }
