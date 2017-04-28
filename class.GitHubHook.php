@@ -182,7 +182,7 @@ class GitHubHook
                   if (0!=$exit)
                       $this->error("error($exit): " . $branch['path'] . '$ ' . $cmd . PHP_EOL . $msg);
                   else
-                      $this->log(msg); 
+                      $this->log($msg); 
               }
           }
       } else {
